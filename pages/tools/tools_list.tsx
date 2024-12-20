@@ -40,15 +40,15 @@ export default function ToolsList() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans">
-      <TaskAlert show={showAlert} setShow={setShowAlert} />
+      <TaskAlert title="魔法即将降临..." msg="即将开启探索之旅,敬请期待！" show={showAlert} setShow={setShowAlert} />
       <Header />
       {/* 内容区域 */}
-      <div className="flex-1 bg-gray-50 py-10">
+      <div className="flex-1 py-10">
         <div className="text-center max-w-3xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">
+          <h1 className="text-4xl font-bold mb-4 text-white">
             魔法工具箱
           </h1>
-          <p className="text-gray-600 text-lg mb-8">
+          <p className="text-white text-lg mb-8">
             专为标书定制，带有魔法的工具。你能在这里找到你最想要的制作标书所需工具。
           </p>
           {/* Tool Cards */}

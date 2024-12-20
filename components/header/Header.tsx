@@ -28,7 +28,7 @@ export default function Header() {
 
   return (
     <>
-      <TaskAlert show={showAlert} setShow={setShowAlert} />
+      <TaskAlert title="魔法即将降临..." msg="即将开启探索之旅,敬请期待！" show={showAlert} setShow={setShowAlert} />
       <header className="flex-none z-50">
         <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
           {/* Logo 区域 */}

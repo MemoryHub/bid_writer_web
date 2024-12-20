@@ -78,7 +78,7 @@ export default function Example() {
   return (
     <div className="fixed inset-0 overflow-hidden bg-black">
       {/* 开发中提示框 */}
-      <TaskAlert show={showAlert} setShow={setShowAlert} />
+      <TaskAlert title="魔法即将降临..." msg="即将开启探索之旅,敬请期待！" show={showAlert} setShow={setShowAlert} />
       
       {/* 背景动画容器 */}
       <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
