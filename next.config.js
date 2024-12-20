@@ -33,6 +33,18 @@ const nextConfig = {
 
     return config
   },
+
+  // 添加页面优化配置
+  experimental: {
+    optimizeCss: true,    // 优化 CSS
+    optimizeImages: true, // 优化图片
+    scrollRestoration: true, // 优化滚动恢复
+  },
+
+  // 添加性能优化
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
 }
 
 module.exports = nextConfig 
