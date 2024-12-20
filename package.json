@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.2.0",
     "@types/styled-components": "^5.1.34",
     "babel-plugin-styled-components": "^2.1.4",
+    "critters": "^0.0.25",
     "next": "15.1.2",
     "preline": "^2.6.0",
     "react": "^19.0.0",

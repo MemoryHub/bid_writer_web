@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
+import { Suspense } from 'react';
+import PreloadRoutes from '../components/routes/PreloadRoutes';
 
 // 配置思源黑体
 const notoSansSC = Noto_Sans_SC({
@@ -22,7 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className={`${notoSansSC.variable} font-sans`}>{children}</body>
+      <body className={`${notoSansSC.variable} font-sans`}>
+        <Suspense fallback={null}>
+          <PreloadRoutes />
+        </Suspense>
+        {children}
+      </body>
     </html>
   );
 }
