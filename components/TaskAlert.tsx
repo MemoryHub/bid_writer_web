@@ -30,8 +30,8 @@ export default function TaskAlert({ show, setShow }: { show: boolean; setShow: (
                     <CheckCircleIcon className="h-6 w-6 text-indigo-400" aria-hidden="true" />
                   </div>
                   <div className="ml-3 w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900">开发中</p>
-                    <p className="mt-1 text-sm text-gray-500">敬请期待！</p>
+                    <p className="text-sm font-medium text-gray-900">魔法即将降临...</p>
+                    <p className="mt-1 text-sm text-gray-500">即将开启探索之旅,敬请期待！</p>
                   </div>
                   <div className="ml-4 flex flex-shrink-0">
                     <button
