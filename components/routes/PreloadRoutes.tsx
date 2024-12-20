@@ -9,6 +9,7 @@ export default function PreloadRoutes() {
   useEffect(() => {
     const routesToPreload = [
       '/magic_stamp',
+      '/tools/tools_list',
       // 添加其他需要预加载的路由
     ]
 
