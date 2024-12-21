@@ -11,7 +11,7 @@ const navigation = [
   { name: '标书工程师', href: '#', isComingSoon: true },
   { name: '魔法工具', href: '/tools/tools_list' },
   { name: '价格', href: '/pricing/pricing'},
-  { name: '关于我们', href: '#', isComingSoon: true },
+  { name: '资讯', href: '#', isComingSoon: true },
 ]
 
 export default function Header() {
@@ -82,7 +82,7 @@ export default function Header() {
               </Link>
 
               <Link
-                href="#"
+                href="/sign_up/sign_up"
                 className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
                 免费注册
               </Link>
@@ -139,7 +139,7 @@ export default function Header() {
                     登录
                   </Link>
                   <Link
-                href="#"
+                href="/sign_up/sign_up"
                 className="w-[95%] inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
                 免费注册
               </Link>

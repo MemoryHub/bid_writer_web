@@ -12,6 +12,8 @@ export default function PreloadRoutes() {
       '/tools/tools_list',
       '/pricing/pricing',
       '/login/login',
+      '/sign_up/sign_up',
+      '/sign_up/verify',
       // 添加其他需要预加载的路由
     ]
 
