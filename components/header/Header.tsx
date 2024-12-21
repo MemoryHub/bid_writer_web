@@ -9,7 +9,7 @@ import TaskAlert from '../TaskAlert'
 const navigation = [
   { name: '首页', href: '/' },
   { name: '标书工程师', href: '#', isComingSoon: true },
-  { name: '魔法工具', href: '/tools/tools_list'},
+  { name: '魔法工具', href: '/tools/tools_list' },
   { name: '价格', href: '#', isComingSoon: true },
   { name: '关于我们', href: '#', isComingSoon: true },
 ]
@@ -71,6 +71,22 @@ export default function Header() {
 
           {/* 预留的右侧空间 */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+            <div className="">
+              <Link
+                key={"Login in"}
+                href={"#"}
+                onClick={(e) => ("")}
+                className="text-base font-medium text-white mr-6"
+              >
+                登录
+              </Link>
+
+              <Link
+                href="#"
+                className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-md focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
+                免费注册
+              </Link>
+            </div>
           </div>
         </nav>
 

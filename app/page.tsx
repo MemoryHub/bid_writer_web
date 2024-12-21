@@ -107,7 +107,7 @@ export default function Example() {
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <Link 
                 href="/magic_stamp"
-                className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 border border-transparent text-white text-md font-medium rounded-md focus:outline-none focus:from-violet-600 focus:to-blue-600 py-3 px-4">
+                className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white text-md font-medium rounded-md focus:outline-none focus:from-violet-600 focus:to-blue-600 py-3 px-4">
                 快速开始
                   <svg className="shrink-0 w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
