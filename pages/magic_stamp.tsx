@@ -11,7 +11,7 @@ export default function MagicStamp() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans bg-[#212121]">
       <Header />
       
       <div className="flex-1 py-10">

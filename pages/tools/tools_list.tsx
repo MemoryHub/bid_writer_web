@@ -39,16 +39,16 @@ export default function ToolsList() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans bg-[#212121]">
       <TaskAlert title="魔法即将降临..." msg="即将开启探索之旅,敬请期待！" show={showAlert} setShow={setShowAlert} />
       <Header />
       {/* 内容区域 */}
       <div className="flex-1 py-10">
-        <div className="text-center max-w-3xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4 text-white">
+        <div className="max-w-3xl mx-auto px-4">
+          <h1 className="text-3xl mb-4 text-white">
             魔法工具箱
           </h1>
-          <p className="text-white text-lg mb-8">
+          <p className="text-white text-md mb-8">
             专为标书定制，带有魔法的工具。你能在这里找到你最想要的制作标书所需工具。
           </p>
           {/* Tool Cards */}
@@ -60,7 +60,7 @@ export default function ToolsList() {
                   onClick={(e) => handleToolClick(e, tool.isComingSoon)}
                   className="flex flex-col group bg-white border shadow-sm rounded-xl overflow-hidden hover:shadow-lg transition"
                 >
-                  <div className="relative pt-[50%] sm:pt-[60%] lg:pt-[80%] rounded-t-xl overflow-hidden">
+                  <div className="relative pt-[50%] sm:pt-[30%] lg:pt-[40%] rounded-t-xl overflow-hidden">
                     <img
                       className="w-full h-full absolute top-0 left-0 object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out rounded-t-xl"
                       src="https://images.unsplash.com/photo-1680868543815-b8666dba60f7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&q=80"
