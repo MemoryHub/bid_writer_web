@@ -10,6 +10,7 @@ export default function PreloadRoutes() {
     const routesToPreload = [
       '/magic_stamp',
       '/tools/tools_list',
+      '/pricing/pricing',
       // 添加其他需要预加载的路由
     ]
 

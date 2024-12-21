@@ -10,7 +10,7 @@ const navigation = [
   { name: '首页', href: '/' },
   { name: '标书工程师', href: '#', isComingSoon: true },
   { name: '魔法工具', href: '/tools/tools_list' },
-  { name: '价格', href: '#', isComingSoon: true },
+  { name: '价格', href: '/pricing/pricing'},
   { name: '关于我们', href: '#', isComingSoon: true },
 ]
 
