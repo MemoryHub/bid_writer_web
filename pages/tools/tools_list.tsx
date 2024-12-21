@@ -58,7 +58,7 @@ export default function ToolsList() {
                 <Link 
                   href={tool.href}
                   onClick={(e) => handleToolClick(e, tool.isComingSoon)}
-                  className="flex flex-col group bg-white border shadow-sm rounded-xl overflow-hidden hover:shadow-lg transition"
+                  className="flex flex-col group shadow-sm rounded-xl overflow-hidden hover:shadow-lg transition bg-[#2F2F2F]"
                 >
                   <div className="relative pt-[50%] sm:pt-[30%] lg:pt-[40%] rounded-t-xl overflow-hidden">
                     <img
@@ -68,10 +68,10 @@ export default function ToolsList() {
                     />
                   </div>
                   <div className="p-4 md:p-5">
-                    <h3 className="text-xl font-bold text-gray-800">
+                    <h3 className="text-md font-bold text-white">
                       {tool.title}
                     </h3>
-                    <p className="text-sm mt-2 text-gray-600">
+                    <p className="text-xs mt-2 text-white text-opacity-80">
                       {tool.description}
                     </p>
                   </div>
