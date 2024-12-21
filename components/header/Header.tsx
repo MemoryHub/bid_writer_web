@@ -74,7 +74,7 @@ export default function Header() {
             <div className="">
               <Link
                 key={"Login in"}
-                href={"#"}
+                href={"/login/login"}
                 onClick={(e) => ("")}
                 className="text-base font-medium text-white mr-6"
               >
@@ -83,7 +83,7 @@ export default function Header() {
 
               <Link
                 href="#"
-                className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-md focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
+                className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
                 免费注册
               </Link>
             </div>
@@ -129,6 +129,20 @@ export default function Header() {
                       {item.name}
                     </Link>
                   ))}
+                </div>
+                <div className="py-6">
+                  <Link
+                  key="Log in"
+                    href="/login/login"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 mb-10 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    登录
+                  </Link>
+                  <Link
+                href="#"
+                className="w-[95%] inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
+                免费注册
+              </Link>
                 </div>
               </div>
             </div>

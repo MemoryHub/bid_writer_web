@@ -11,6 +11,7 @@ export default function PreloadRoutes() {
       '/magic_stamp',
       '/tools/tools_list',
       '/pricing/pricing',
+      '/login/login',
       // 添加其他需要预加载的路由
     ]
 

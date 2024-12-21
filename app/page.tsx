@@ -51,7 +51,7 @@ const Background = () => {
 }
 
 // 主页组件
-export default function Example() {
+export default function Home() {
   // 状态管理
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)  // 控制移动端菜单
   const [isLoading, setIsLoading] = useState(true)            // 控制加载状态
