@@ -5,18 +5,55 @@ import Header from '../components/header/Header'
 import UploadButton from '../components/button/UploadButton'
 import '../app/globals.css'
 
+/**
+ * 魔法印章组件
+ * 功能：
+ * 1. 提供可拖动分割的左右两个面板
+ * 2. 根据设备类型和面板宽度自动显示/隐藏内容
+ * 3. 支持文件上传功能
+ */
 export default function MagicStamp() {
-  const [splitPosition, setSplitPosition] = useState(50) // 默认50%
-  const isDragging = useRef(false)
-  const splitContainerRef = useRef<HTMLDivElement>(null)
+  // ==================== 状态管理 ====================
+  const [splitPosition, setSplitPosition] = useState(50)  // 分割线位置，默认50%
+  const [showLeftBlur, setShowLeftBlur] = useState(false)  // 左侧面板模糊状态
+  const [showRightBlur, setShowRightBlur] = useState(false)  // 右侧面板模糊状态
+  const [isMobile, setIsMobile] = useState(false)  // 设备类型标识
+  const isDragging = useRef(false)  // 拖动状态标识
+  const splitContainerRef = useRef<HTMLDivElement>(null)  // 分割容器引用
 
+  // ==================== 设备检测 ====================
+  /**
+   * 检测设备类型并监听窗口大小变化
+   * 目的：根据屏幕宽度判断是否为移动设备，以应用不同的阈值
+   */
+  useEffect(() => {
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth <= 768)  // 768px作为移动设备断点
+    }
+    
+    checkDevice()
+    window.addEventListener('resize', checkDevice)
+    return () => window.removeEventListener('resize', checkDevice)
+  }, [])
+
+  // ==================== 拖动处理 ====================
+  /**
+   * 处理分割线拖动开始
+   * 目的：初始化拖动状态，设置鼠标样式，禁用文本选择
+   */
   const handleMouseDown = () => {
     isDragging.current = true
     document.body.style.cursor = 'col-resize'
-    // 防止拖动时选中文本
     document.body.style.userSelect = 'none'
   }
 
+  /**
+   * 处理分割线拖动过程
+   * 目的：
+   * 1. 跟踪鼠标移动更新分割线位置
+   * 2. 限制拖动范围在20%-80%之间
+   * 3. 清理拖动结束状态
+   */
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current || !splitContainerRef.current) return
@@ -26,7 +63,7 @@ export default function MagicStamp() {
       const mouseX = e.clientX - containerRect.left
       const newPosition = (mouseX / containerWidth) * 100
 
-      // 限制拖动范围在20%到80%之间
+      // 限制拖动范围
       if (newPosition >= 20 && newPosition <= 80) {
         setSplitPosition(newPosition)
       }
@@ -47,10 +84,39 @@ export default function MagicStamp() {
     }
   }, [])
 
+  // ==================== 模糊效果控制 ====================
+  /**
+   * 监听分割位置变化，控制模糊效果
+   * 目的：
+   * 1. 当面板宽度小于阈值时显示模糊效果
+   * 2. 移动端和桌面端使用不同阈值（移动端45%，桌面端25%）
+   */
+  useEffect(() => {
+    const checkWidth = () => {
+      const threshold = isMobile ? 45 : 25
+      // 检查左侧区域宽度
+      if (splitPosition < threshold) {
+        setShowLeftBlur(true)
+      } else {
+        setShowLeftBlur(false)
+      }
+      
+      // 检查右侧区域宽度
+      if ((100 - splitPosition) < threshold) {
+        setShowRightBlur(true)
+      } else {
+        setShowRightBlur(false)
+      }
+    }
+    checkWidth()
+  }, [splitPosition, isMobile])
+
+  // ==================== 文件处理 ====================
   const handleFileSelect = (file: File) => {
     console.log('Selected file:', file)
   }
 
+  // ==================== 渲染UI ====================
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#212121]">
       <Header />
@@ -66,10 +132,18 @@ export default function MagicStamp() {
         >
           {/* 左侧面板 */}
           <div
-            className="bg-[#212121] overflow-auto"
+            className="bg-[#212121] overflow-auto relative"
             style={{ width: `${splitPosition}%` }}
           >
-            <div className="h-full flex flex-col">
+            {/* 左侧模糊背景层 */}
+            {showLeftBlur && (
+              <div className="absolute inset-0 backdrop-blur-md bg-black/30 z-10 flex items-center justify-center">
+                <div className="text-white/50 text-sm">内容已隐藏</div>
+              </div>
+            )}
+            
+            {/* 原有内容 */}
+            <div className={`h-full flex flex-col ${showLeftBlur ? 'invisible' : ''}`}>
               {/* 上部分文字区域 */}
               <div className="px-20 pt-20">
                 <h1 className="text-white font-bold w-full
@@ -120,12 +194,21 @@ export default function MagicStamp() {
 
           {/* 右侧面板 */}
           <div
-            className="bg-[#212121] overflow-auto"
+            className="bg-[#212121] overflow-auto relative"
             style={{ width: `${100 - splitPosition}%` }}
           >
-            <div className="p-4">
-              {/* 右侧内容 */}
-              右侧内容区域
+            {/* 右侧模糊背景层 */}
+            {showRightBlur && (
+              <div className="absolute inset-0 backdrop-blur-md bg-black/30 z-10 flex items-center justify-center">
+                <div className="text-white/50 text-sm">内容已隐藏</div>
+              </div>
+            )}
+            
+            {/* 右侧原有内容 */}
+            <div className={`h-full flex flex-col ${showRightBlur ? 'invisible' : ''}`}>
+              <div className="p-4">
+                右侧内容区域
+              </div>
             </div>
           </div>
         </div>
