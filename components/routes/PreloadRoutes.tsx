@@ -14,6 +14,7 @@ export default function PreloadRoutes() {
       '/login/login',
       '/sign_up/sign_up',
       '/sign_up/verify',
+      '/forget_pwd/forget_pwd',
       // 添加其他需要预加载的路由
     ]
 

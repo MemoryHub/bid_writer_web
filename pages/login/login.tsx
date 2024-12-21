@@ -55,7 +55,7 @@ export default function Login() {
                   密码
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                  <a href="/forget_pwd/forget_pwd" className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
                     忘记密码?
                   </a>
                 </div>
