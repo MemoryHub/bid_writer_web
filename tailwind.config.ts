@@ -15,6 +15,10 @@ export default {
       fontFamily: {
         sans: ['Noto Sans SC', 'sans-serif'],
       },
+      screens: {
+        'tablet': '768px',
+        'mobile': '480px'
+      },
     },
   },
   plugins: [],

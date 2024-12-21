@@ -5,9 +5,10 @@ import TaskAlert from '../TaskAlert'
 
 interface UploadButtonProps {
   onFileSelect?: (file: File) => void;
+  width?: string;
 }
 
-export default function UploadButton({ onFileSelect }: UploadButtonProps) {
+export default function UploadButton({ onFileSelect, width }: UploadButtonProps) {
   const [showAlert, setShowAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
 
@@ -34,7 +35,7 @@ export default function UploadButton({ onFileSelect }: UploadButtonProps) {
       return
     }
 
-    // 如果验证通过，调用回���函数
+    // 如��验证通过，调用回调函数
     onFileSelect?.(file)
   }
 
@@ -48,7 +49,8 @@ export default function UploadButton({ onFileSelect }: UploadButtonProps) {
       />
       <label 
         htmlFor="file-upload"
-        className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 border border-transparent text-white text-md font-medium rounded-md focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 cursor-pointer py-3 px-4 transition-all duration-300 ease-in-out"
+        className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 border border-transparent text-white text-md font-medium rounded-md focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 cursor-pointer py-3 px-4 transition-all duration-300 ease-in-out min-w-[180px]"
+        style={width ? { width } : undefined}
       >
         <svg 
           className="shrink-0 w-6 h-6" 
