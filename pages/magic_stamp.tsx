@@ -159,7 +159,7 @@ export default function MagicStamp() {
                   mobile:text-sm
                   text-xs"
                 >
-                  一键盖章，支持一键加盖整本印章，一键加盖骑缝章。从此告别繁琐的手动盖章，让AI为你节省时间。
+                  一键加盖整本印章，一键加盖骑缝章。告别繁琐的手动盖章。
                 </p>
               </div>
 
