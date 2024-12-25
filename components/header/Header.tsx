@@ -5,6 +5,8 @@ import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import TaskAlert from '../TaskAlert'
+import { logout } from '@/services/userServices'
+import Alert from '../alert/Alert'
 
 const navigation = [
   { name: '首页', href: '/' },
@@ -17,8 +19,12 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
+  const [showTaskAlert, setShowTaskAlert] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [email, setEmail] = useState('')
+  const [alertType, setAlertType] = useState<'success' | 'error'>('success')
+  const [alertTitle, setAlertTitle] = useState('')
+  const [alertMsg, setAlertMsg] = useState('')
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -29,25 +35,51 @@ export default function Header() {
     }
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('email')
-    setIsLoggedIn(false)
-    setEmail('')
+  const handleLogout = async () => {
+    try {
+      await logout();
+      localStorage.removeItem('token')
+      localStorage.removeItem('email')
+      setIsLoggedIn(false)
+      setEmail('')
+      setAlertType('success')
+      setAlertTitle('登出成功')
+      setAlertMsg('你已成功登出')
+      setShowAlert(true)
+      window.location.href = '/'
+    } catch (error) {
+      console.error('登出失败:', error)
+      setAlertType('error')
+      setAlertTitle('错误')
+      setAlertMsg('登出失败，请重试')
+      setShowAlert(true)
+    }
   }
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, isComingSoon?: boolean) => {
     if (isComingSoon) {
       e.preventDefault()
-      setShowAlert(true)
-      setTimeout(() => setShowAlert(false), 3000)
+      setShowTaskAlert(true)
+      setTimeout(() => setShowTaskAlert(false), 3000)
     }
   }
 
   return (
     <>
-      <TaskAlert title="魔法即将降临..." msg="即将开启探索之旅,敬请期待！" show={showAlert} setShow={setShowAlert} />
-      <header className="flex-none z-50">
+      {showAlert && (
+        <Alert
+          type={alertType}
+          title={alertTitle}
+          msg={alertMsg}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
+
+      {showTaskAlert && (
+        <TaskAlert title="魔法即将降临..." msg="即将开启探索之旅,敬请期待！" show={showTaskAlert} setShow={setShowTaskAlert} />
+      )}
+
+      <header className="flex-none z-40">
         <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
           {/* Logo 区域 */}
           <div className="flex lg:flex-1">
@@ -94,7 +126,7 @@ export default function Header() {
                 <div className="flex items-center">
                   <span className="text-white mr-4">{email}</span>
                   <button onClick={handleLogout} className="text-white hover:text-gray-300">
-                    退出
+                    登出
                   </button>
                 </div>
               ) : (
@@ -164,7 +196,7 @@ export default function Header() {
                     <div className="flex items-center">
                       <span className="mr-4 text-gray-900 hover:bg-gray-50">{email}</span>
                       <button onClick={handleLogout} className="text-indigo-400 hover:text-gray-300">
-                        退出
+                        登出
                       </button>
                     </div>
                   ) : (

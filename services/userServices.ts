@@ -31,3 +31,14 @@ export const register = async (email: string, password: string) => {
     throw new Error(handler.getErrorMessage()); // 抛出错误信息
   }
 };
+
+// 登出请求 
+export const logout = async () => {
+  const token = localStorage.getItem('token');
+  const response = await apiClient.post('/auth/jwt/logout', {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

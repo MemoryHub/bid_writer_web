@@ -1,15 +1,22 @@
+'use client' // 确保这是一个客户端组件
+
 import '../../app/globals.css'  // 导入全局样式
 import GradientBg from '../../components/bg/GradientBg'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { login } from '../../services/userServices'; // 更新导入路径
 import { LoginResponse } from '../../utils/response'; // 导入 LoginResponse 接口
+import Alert from '@/components/alert/Alert'; // 导入 Alert 组件
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState<'success' | 'error'>('success');
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMsg, setAlertMsg] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +25,16 @@ export default function Login() {
       if (response && response.access_token) {
         localStorage.setItem('token', response.access_token); // 后端返回 token
         localStorage.setItem('email', email); 
-        router.back(); // 登录成功后返回到上一个页面
+        setAlertType('success');
+        setAlertTitle('登录成功');
+        setAlertMsg('你已成功登录');
+        setShowAlert(true);
+
+        // 显示 Alert 后延迟执行 router.back()
+        setTimeout(() => {
+          router.back();
+        }, 2000); // 2秒后执行
+
       } else {
         setErrorMessage('登录失败，请检查您的邮箱和密码');
       }
@@ -123,6 +139,15 @@ export default function Login() {
           </p>
         </div>
       </div>
+
+      {showAlert && (
+        <Alert
+          type={alertType}
+          title={alertTitle}
+          msg={alertMsg}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </>
   )
 }
