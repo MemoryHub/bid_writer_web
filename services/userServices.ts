@@ -58,7 +58,7 @@ export const sendRegistrationCode = async (email: string) => {
 // 邮箱验证码注册
 export const registrationByCode = async (email: string, code: string) => {
   try {
-    const json =  {
+    const params =  {
       "email": email,
       "code": code,
       "user_create": {
@@ -70,17 +70,7 @@ export const registrationByCode = async (email: string, code: string) => {
       }
     }
     const response = await apiClient.post(`/auth/register/verify`,
-      {
-        "email": email,
-        "code": code,
-        "user_create": {
-          "email": email,
-          "password": localStorage.getItem('reg_pwd'),
-          "is_active": true,
-          "is_superuser": false,
-          "is_verified": false
-        }
-      },
+      params,
       {
         headers: {
           "Content-Type": "application/json", // 设置请求头
@@ -94,6 +84,59 @@ export const registrationByCode = async (email: string, code: string) => {
       console.error('注册失败:', error.response.data); // Log the error response
     } else {
       console.error('注册失败:', error);
+    }
+    throw error; // 抛出错误以便在调用处处理
+  }
+};
+
+
+// 发送找回密码验证码
+export const sendForgetPwdCode = async (email: string) => {
+  try {
+    const response = await apiClient.post(`/auth/forgot-password/send-code?email=${encodeURIComponent(email)}`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json", // 设置请求头
+        },
+      }
+    ) as ApiResponse<null>;
+    return response; // 返回响应数据
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('发送验证码失败:', error.response.data); // Log the error response
+    } else {
+      console.error('发送验证码失败:', error);
+    }
+    throw error; // 抛出错误以便在调用处处理
+  }
+};
+
+
+
+// 邮箱验证码注册
+export const resetPwd = async (email: string, code: string, password: string) => {
+  try {
+    const params =  {
+      "email": email,
+      "code": code,
+      "new_password": password,
+    }
+    const response = await apiClient.post(`/auth/reset-password/verify`,
+      params,
+      {
+        headers: {
+          "Content-Type": "application/json", // 设置请求头
+        },
+      }
+    ) as ApiResponse<null>;
+
+    return response; // 返回响应数据
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('找回密码失败:', error.response.data); // Log the error response
+    } else {
+      console.error('找回密码失败:', error);
     }
     throw error; // 抛出错误以便在调用处处理
   }

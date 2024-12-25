@@ -5,22 +5,66 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import '../../app/globals.css'
 import GradientBg from '../../components/bg/GradientBg'
+import SubmitButton from '@/components/button/SubmitButton'
+import { sendForgetPwdCode } from '@/services/userServices'
+import Alert from '@/components/alert/Alert'
+
 
 export default function ForgetPwd() {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false); // 添加 loading 状态
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState<'success' | 'error'>('success');
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMsg, setAlertMsg] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    router.push({
-      pathname: '/sign_up/verify',
-      query: { email }
-    })
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true); // 开始加载
+
+    try {
+      const response = await sendForgetPwdCode(email);
+      
+      if (response.code === 200) {
+        localStorage.setItem('forgot_pwd_email', email); 
+        setAlertType('success');
+        setAlertTitle('验证码已发送');
+        setAlertMsg('请检查您的邮箱以获取验证码');
+        setShowAlert(true);
+
+        setTimeout(() => {
+          router.push({
+            pathname: '/forget_pwd/forget_pwd_verify',
+            query: { email }
+          })
+        }, 1000);
+      } else {
+        setAlertType('error');
+        setAlertTitle('验证码失败');
+        setAlertMsg('发送验证码失败，请检查您的邮箱');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      setAlertType('error');
+      setAlertTitle('验证码失败');
+      setAlertMsg('发送验证码失败，请检查您的邮箱');
+      setShowAlert(true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <>
+      {showAlert && (
+        <Alert
+          type={alertType}
+          title={alertTitle}
+          msg={alertMsg}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <GradientBg />
         <div className="sm:mx-auto sm:w-full sm:max-w-[480px]">
@@ -60,6 +104,7 @@ export default function ForgetPwd() {
                     type="email"
                     autoComplete="email"
                     required
+                    placeholder="请输入邮箱地址"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-white outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-600 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
@@ -67,12 +112,11 @@ export default function ForgetPwd() {
                 </div>
               </div>
               <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-[100px] bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 py-3 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  找回密码
-                </button>
+              <SubmitButton
+                loading={loading}
+                onClick={handleSubmit}
+                text="找回密码"
+              />
               </div>
             </form>
           </div>

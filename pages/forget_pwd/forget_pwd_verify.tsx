@@ -6,11 +6,12 @@ import '../../app/globals.css'
 import GradientBg from '../../components/bg/GradientBg'
 import Alert from '@/components/alert/Alert'
 import SubmitButton from '@/components/button/SubmitButton'
-import { registrationByCode, sendRegistrationCode } from '@/services/userServices'
+import { registrationByCode, resetPwd, sendForgetPwdCode, sendRegistrationCode } from '@/services/userServices'
 
-export default function Verify() {
+export default function ForgetPwdVerify() {
   const router = useRouter()
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('');
   const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', ''])
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const [countdown, setCountdown] = useState(60)
@@ -61,7 +62,7 @@ export default function Verify() {
       if (savedCountdown) {
         setCountdown(Number(savedCountdown))
       }
-      const savedEmail = localStorage.getItem('reg_email')
+      const savedEmail = localStorage.getItem('forgot_pwd_email')
       if (savedEmail) {
         setEmail(savedEmail)
       }
@@ -83,7 +84,7 @@ export default function Verify() {
     setCountdown(60) // Reset countdown
     startCountdown()
     try {
-      const response = await sendRegistrationCode(localStorage.getItem('reg_email') as string);
+      const response = await sendForgetPwdCode(localStorage.getItem('forgot_pwd_email') as string);
       if (response.code === 200) {
         setAlertType('success');
         setAlertTitle('验证码已发送');
@@ -120,26 +121,25 @@ export default function Verify() {
     }
 
     try {
-      const response = await registrationByCode(email as string, code);
+      const response = await resetPwd(email as string, code, password);
       if (response.code === 200) {
         setAlertType('success');
-        setAlertTitle('注册成功');
-        setAlertMsg('注册成功，请登录');
+        setAlertTitle('成功');
+        setAlertMsg('找回密码成功，请登录');
         setShowAlert(true);
-        localStorage.removeItem('reg_pwd');
-        localStorage.removeItem('reg_email');
-        
+        localStorage.removeItem('forgot_pwd_email');
+
         router.push('/');
       } else {
         setAlertType('error');
-        setAlertTitle('注册失败');
-        setAlertMsg('注册失败，请重试');
+        setAlertTitle('失败');
+        setAlertMsg('找回密码失败，请重试');
         setShowAlert(true);
       }
     } catch (error) {
       setAlertType('error');
-      setAlertTitle('注册失败');
-      setAlertMsg('注册失败，请重试');
+      setAlertTitle('失败');
+      setAlertMsg('找回密码失败，请重试');
       setShowAlert(true);
     } finally {
       setLoading(false);
@@ -208,10 +208,32 @@ export default function Verify() {
               </div>
 
               <div>
+                <div className="flex items-center justify-center">
+                  <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100 mb-4">
+                    新密码
+                  </label>
+                </div>
+                <div className="mt-2 flex justify-center">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    placeholder="请输入你的新密码"
+                    autoComplete="current-password"
+                    className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-white outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-600 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+
+
+              <div>
                 <SubmitButton
                   loading={loading}
                   onClick={handleRegister}
-                  text="确认并注册"
+                  text="确认"
                 />
               </div>
             </form>
