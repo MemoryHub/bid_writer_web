@@ -11,18 +11,21 @@ const tools = [
     title: "魔法印章",
     description: "一键盖章，支持一键加盖整本印章，一键加盖骑缝章。",
     href: "/magic_stamp",
+    img: "/img//magic-stamp.jpg",
     isComingSoon: false
   },
   {
     title: "电子签名",
     description: "智能插入电子签名，支持图片插入，让标书更专业。",
     href: "#",
+    img: "/img//magic-sign.jpg",
     isComingSoon: true
   },
   {
     title: "魔法排版",
     description: "智能识别文档结构，自动调整格式，让标书排版更专业。",
     href: "#",
+    img: "/img//magic-form.jpg",
     isComingSoon: true
   }
 ];
@@ -63,7 +66,7 @@ export default function ToolsList() {
                   <div className="relative pt-[50%] sm:pt-[30%] lg:pt-[40%] rounded-t-xl overflow-hidden">
                     <img
                       className="w-full h-full absolute top-0 left-0 object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out rounded-t-xl"
-                      src="https://images.unsplash.com/photo-1680868543815-b8666dba60f7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&q=80"
+                      src={tool.img}
                       alt={tool.title}
                     />
                   </div>
