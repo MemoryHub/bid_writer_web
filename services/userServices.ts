@@ -21,18 +21,6 @@ export const login = async (email: string, password: string) => {
   return response; // 返回 access_token
 };
 
-// 注册请求
-export const register = async (email: string, password: string) => {
-  const response = await apiClient.post<ApiResponse<null>>('/register', { email, password });
-  const handler = new ApiResponseHandler(response.data);
-
-  if (handler.isSuccess()) {
-    return handler.getData(); // 返回 null
-  } else {
-    throw new Error(handler.getErrorMessage()); // 抛出错误信息
-  }
-};
-
 // 登出请求 
 export const logout = async () => {
   const token = localStorage.getItem('token');
@@ -61,6 +49,51 @@ export const sendRegistrationCode = async (email: string) => {
       console.error('发送验证码失败:', error.response.data); // Log the error response
     } else {
       console.error('发送验证码失败:', error);
+    }
+    throw error; // 抛出错误以便在调用处处理
+  }
+};
+
+
+// 邮箱验证码注册
+export const registrationByCode = async (email: string, code: string) => {
+  try {
+    const json =  {
+      "email": email,
+      "code": code,
+      "user_create": {
+        "email": email,
+        "password": localStorage.getItem('reg_pwd'),
+        "is_active": true,
+        "is_superuser": false,
+        "is_verified": false
+      }
+    }
+    const response = await apiClient.post(`/auth/register/verify`,
+      {
+        "email": email,
+        "code": code,
+        "user_create": {
+          "email": email,
+          "password": localStorage.getItem('reg_pwd'),
+          "is_active": true,
+          "is_superuser": false,
+          "is_verified": false
+        }
+      },
+      {
+        headers: {
+          "Content-Type": "application/json", // 设置请求头
+        },
+      }
+    ) as ApiResponse<null>;
+
+    return response; // 返回响应数据
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('注册失败:', error.response.data); // Log the error response
+    } else {
+      console.error('注册失败:', error);
     }
     throw error; // 抛出错误以便在调用处处理
   }

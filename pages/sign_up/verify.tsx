@@ -2,15 +2,23 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 import '../../app/globals.css'
 import GradientBg from '../../components/bg/GradientBg'
+import Alert from '@/components/alert/Alert'
+import SubmitButton from '@/components/button/SubmitButton'
+import { registrationByCode, sendRegistrationCode } from '@/services/userServices'
 
 export default function Verify() {
   const router = useRouter()
-  const { email } = router.query
+  const [email, setEmail] = useState('')
   const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', ''])
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const [countdown, setCountdown] = useState(60)
+  const [loading, setLoading] = useState(false)
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertType, setAlertType] = useState<'success' | 'error'>('success')
+  const [alertTitle, setAlertTitle] = useState('')
+  const [alertMsg, setAlertMsg] = useState('')
 
   const handleChange = (index: number, value: string) => {
     if (value.length <= 1) {
@@ -38,8 +46,123 @@ export default function Verify() {
     console.log('Verification code:', code)
   }
 
+
+  const startCountdown = () => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return timer
+  }
+
+  useEffect(() => {
+    // Check for existing countdown in localStorage
+    if (typeof window !== 'undefined') {
+      const savedCountdown = localStorage.getItem('countdown')
+      if (savedCountdown) {
+        setCountdown(Number(savedCountdown))
+      }
+      const savedEmail = localStorage.getItem('reg_email')
+      if (savedEmail) {
+        setEmail(savedEmail)
+      }
+    }
+
+    const timer = startCountdown()
+
+    return () => clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    // Save countdown to localStorage
+    localStorage.setItem('countdown', countdown.toString())
+  }, [countdown])
+
+
+
+  const handleResendCode = async () => {
+    setCountdown(60) // Reset countdown
+    startCountdown()
+    try {
+      const response = await sendRegistrationCode(localStorage.getItem('reg_email') as string);
+      if (response.code === 200) {
+        setAlertType('success');
+        setAlertTitle('验证码已发送');
+        setAlertMsg('请检查您的邮箱以获取验证码');
+        setShowAlert(true);
+      } else {
+        setAlertType('error');
+        setAlertTitle('发送验证码失败');
+        setAlertMsg('请检查您的邮箱以获取验证码');
+        setShowAlert(true);
+        setCountdown(0);
+      }
+    } catch (error) {
+      setAlertType('error');
+      setAlertTitle('发送验证码失败');
+      setAlertMsg('请检查您的邮箱以获取验证码');
+      setShowAlert(true);
+      setCountdown(0);
+    }
+  }
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const code = verificationCode.join('');
+    // Validate email and code
+    if (!email || !code) {
+      setAlertType('error');
+      setAlertTitle('错误');
+      setAlertMsg('请确保输入有效的邮箱和验证码');
+      setShowAlert(true);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await registrationByCode(email as string, code);
+      if (response.code === 200) {
+        setAlertType('success');
+        setAlertTitle('注册成功');
+        setAlertMsg('注册成功，请登录');
+        setShowAlert(true);
+        localStorage.removeItem('reg_pwd');
+        localStorage.removeItem('reg_email');
+        
+        router.push('/');
+      } else {
+        setAlertType('error');
+        setAlertTitle('注册失败');
+        setAlertMsg('注册失败，请重试');
+        setShowAlert(true);
+      }
+    } catch (error) {
+      setAlertType('error');
+      setAlertTitle('注册失败');
+      setAlertMsg('注册失败，请重试');
+      setShowAlert(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
+      {showAlert && (
+        <Alert
+          type={alertType}
+          title={alertTitle}
+          msg={alertMsg}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <GradientBg />
         <div className="sm:mx-auto sm:w-full sm:max-w-[480px]">
@@ -92,21 +215,22 @@ export default function Verify() {
               </div>
 
               <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-[100px] bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 py-3 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  确认
-                </button>
+                <SubmitButton
+                  loading={loading}
+                  onClick={handleRegister}
+                  text="确认并注册"
+                />
               </div>
             </form>
 
             <div className="mt-6">
               <button
                 type="button"
-                className="flex w-full justify-center text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+                className={`flex w-full justify-center text-sm ${countdown > 0 ? 'text-gray-700 cursor-not-allowed' : 'text-indigo-600 hover:text-indigo-500'} dark:text-indigo-400 dark:hover:text-indigo-300`}
+                onClick={handleResendCode}
+                disabled={countdown > 0}
               >
-                没有收到邮件？重新发送
+                {countdown > 0 ? `验证码已发送 (${countdown}秒)` : '没有收到邮件？重新发送'}
               </button>
             </div>
           </div>

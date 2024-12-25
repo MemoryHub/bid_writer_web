@@ -26,8 +26,15 @@ export default function SignUp() {
     setErrorMessage('');
     try {
       const response = await sendRegistrationCode(email);
+      
+      if(response.code === 1001){
+        setErrorMessage('邮箱已注册');
+        return;
+      }
+      
       if (response.code === 200) {
-        localStorage.setItem('pwd', password); 
+        localStorage.setItem('reg_email', email); 
+        localStorage.setItem('reg_pwd', password); 
         setAlertType('success');
         setAlertTitle('验证码已发送');
         setAlertMsg('请检查您的邮箱以获取验证码');
