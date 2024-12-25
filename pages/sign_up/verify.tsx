@@ -70,7 +70,7 @@ export default function Verify() {
           <div className="px-4 sm:px-10">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
+                <label className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100 text-center mb-4">
                   验证码
                 </label>
                 <div className="mt-1 flex justify-center space-x-2">

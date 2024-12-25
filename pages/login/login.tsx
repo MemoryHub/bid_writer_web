@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { login } from '../../services/userServices'; // 更新导入路径
 import { LoginResponse } from '../../utils/response'; // 导入 LoginResponse 接口
 import Alert from '@/components/alert/Alert'; // 导入 Alert 组件
+import SubmitButton from '../../components/button/SubmitButton';
 
 export default function Login() {
   const router = useRouter();
@@ -17,9 +18,12 @@ export default function Login() {
   const [alertType, setAlertType] = useState<'success' | 'error'>('success');
   const [alertTitle, setAlertTitle] = useState('');
   const [alertMsg, setAlertMsg] = useState('');
+  const [loading, setLoading] = useState(false); // 添加 loading 状态
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true); // 开始加载
+    setErrorMessage('');
     try {
       const response = await login(email, password) as LoginResponse; // 使用 LoginResponse 类型
       if (response && response.access_token) {
@@ -29,30 +33,31 @@ export default function Login() {
         setAlertTitle('登录成功');
         setAlertMsg('你已成功登录');
         setShowAlert(true);
-
-        // 显示 Alert 后延迟执行 router.back()
-        setTimeout(() => {
-          router.back();
-        }, 2000); // 2秒后执行
+          // 显示 Alert 后延迟执行 router.back()
+          setTimeout(() => {
+            router.push('/');
+          }, 1000); // 1秒后执行
 
       } else {
         setErrorMessage('登录失败，请检查您的邮箱和密码');
       }
     } catch (error) {
       setErrorMessage('登录失败，请检查您的邮箱和密码');
+    } finally {
+      setLoading(false); // 结束加载
     }
   };
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
+      {showAlert && (
+        <Alert
+          type={alertType}
+          title={alertTitle}
+          msg={alertMsg}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <GradientBg />
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -122,12 +127,11 @@ export default function Login() {
             {errorMessage && <p className="text-xs ml-2 text-red-500">{errorMessage}</p>}
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-[100px] bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 py-3 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                登录
-              </button>
+              <SubmitButton
+                loading={loading}
+                onClick={handleSubmit}
+                text="登录"
+              />
             </div>
           </form>
 
@@ -139,15 +143,6 @@ export default function Login() {
           </p>
         </div>
       </div>
-
-      {showAlert && (
-        <Alert
-          type={alertType}
-          title={alertTitle}
-          msg={alertMsg}
-          onClose={() => setShowAlert(false)}
-        />
-      )}
     </>
-  )
+  );
 }
