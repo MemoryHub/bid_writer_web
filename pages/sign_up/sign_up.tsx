@@ -5,18 +5,22 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import '../../app/globals.css'
 import GradientBg from '../../components/bg/GradientBg'
+import { register } from '../../services/userServices'
 
 export default function SignUp() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    router.push({
-      pathname: '/sign_up/verify',
-      query: { email }
-    })
+    try {
+      await register(email, password)
+      router.push('/sign_up/verify?email=' + email)
+    } catch (error) {
+      setErrorMessage('注册失败，请检查您的输入')
+    }
   }
 
   return (
@@ -93,6 +97,8 @@ export default function SignUp() {
                   注册
                 </button>
               </div>
+
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </form>
           </div>
         </div>

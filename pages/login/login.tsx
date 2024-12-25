@@ -1,7 +1,32 @@
 import '../../app/globals.css'  // 导入全局样式
 import GradientBg from '../../components/bg/GradientBg'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { login } from '../../services/userServices'; // 更新导入路径
+import { LoginResponse } from '../../utils/response'; // 导入 LoginResponse 接口
 
 export default function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await login(email, password) as LoginResponse; // 使用 LoginResponse 类型
+      if (response && response.access_token) {
+        localStorage.setItem('token', response.access_token); // 后端返回 token
+        localStorage.setItem('email', email); 
+        router.back(); // 登录成功后返回到上一个页面
+      } else {
+        setErrorMessage('登录失败，请检查您的邮箱和密码');
+      }
+    } catch (error) {
+      setErrorMessage('登录失败，请检查您的邮箱和密码');
+    }
+  };
+
   return (
     <>
       {/*
@@ -32,7 +57,7 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">
                 邮箱地址
@@ -43,8 +68,11 @@ export default function Login() {
                   name="email"
                   type="email"
                   required
+                  placeholder="请输入你的邮箱地址"
                   autoComplete="email"
                   className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-white outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-600 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -66,14 +94,19 @@ export default function Login() {
                   name="password"
                   type="password"
                   required
+                  placeholder="请输入你的密码"
                   autoComplete="current-password"
                   className="block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-white outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-600 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
 
+            {errorMessage && <p className="text-xs ml-2 text-red-500">{errorMessage}</p>}
+
             <div>
-            <button
+              <button
                 type="submit"
                 className="flex w-full justify-center rounded-[100px] bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 py-3 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >

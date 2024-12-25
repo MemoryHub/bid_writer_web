@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
@@ -10,13 +10,31 @@ const navigation = [
   { name: '首页', href: '/' },
   { name: '标书工程师', href: '#', isComingSoon: true },
   { name: '魔法工具', href: '/tools/tools_list' },
-  { name: '价格', href: '/pricing/pricing'},
+  { name: '价格', href: '/pricing/pricing' },
   { name: '资讯', href: '#', isComingSoon: true },
 ]
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [email, setEmail] = useState('')
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const storedEmail = localStorage.getItem('email')
+    if (token) {
+      setIsLoggedIn(true)
+      setEmail(storedEmail || '')
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('email')
+    setIsLoggedIn(false)
+    setEmail('')
+  }
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, isComingSoon?: boolean) => {
     if (isComingSoon) {
@@ -72,20 +90,31 @@ export default function Header() {
           {/* 预留的右侧空间 */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <div className="">
-              <Link
-                key={"Login in"}
-                href={"/login/login"}
-                onClick={(e) => ("")}
-                className="text-base font-medium text-white mr-6"
-              >
-                登录
-              </Link>
+              {isLoggedIn ? (
+                <div className="flex items-center">
+                  <span className="text-white mr-4">{email}</span>
+                  <button onClick={handleLogout} className="text-white hover:text-gray-300">
+                    退出
+                  </button>
+                </div>
+              ) : (
+                <div className="">
+                  <Link
+                    key={"Login in"}
+                    href={"/login/login"}
+                    onClick={(e) => ("")}
+                    className="text-base font-medium text-white mr-6"
+                  >
+                    登录
+                  </Link>
 
-              <Link
-                href="/sign_up/sign_up"
-                className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
-                免费注册
-              </Link>
+                  <Link
+                    href="/sign_up/sign_up"
+                    className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
+                    免费注册
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </nav>
@@ -131,18 +160,30 @@ export default function Header() {
                   ))}
                 </div>
                 <div className="py-6">
-                  <Link
-                  key="Log in"
-                    href="/login/login"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 mb-10 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    登录
-                  </Link>
-                  <Link
-                href="/sign_up/sign_up"
-                className="w-[95%] inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4">
-                免费注册
-              </Link>
+                  {isLoggedIn ? (
+                    <div className="flex items-center">
+                      <span className="mr-4 text-gray-900 hover:bg-gray-50">{email}</span>
+                      <button onClick={handleLogout} className="text-indigo-400 hover:text-gray-300">
+                        退出
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="">
+                      <Link
+                        key="Login in"
+                        href="/login/login"
+                        className="-mx-3 block rounded-lg px-3 py-2.5 mb-10 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                      >
+                        登录
+                      </Link>
+                      <Link
+                        href="/sign_up/sign_up"
+                        className="w-[95%] inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-red-600 to-violet-600 hover:from-violet-600 hover:to-red-600 text-white text-md font-medium rounded-[100px] focus:outline-none focus:from-violet-600 focus:to-blue-600 py-1 px-4"
+                      >
+                        免费注册
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

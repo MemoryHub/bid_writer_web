@@ -1,8 +1,6 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { Dialog, DialogPanel } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import TaskAlert from '../components/TaskAlert'
 import Link from 'next/link'
 import Header from '../components/header/Header'
