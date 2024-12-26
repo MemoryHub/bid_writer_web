@@ -1,6 +1,6 @@
 import axios from 'axios';
 import apiClient from '../utils/api'; // 导入 Axios 实例
-import { ApiResponse, ApiResponseHandler, LoginResponse } from '../utils/response'; // 导入响应处理类
+import { ApiResponse, LoginResponse } from '../utils/response'; // 导入响应处理类
 import qs from 'qs'; // 导入 qs 库
 // 登录请求
 export const login = async (email: string, password: string) => {
@@ -45,8 +45,8 @@ export const sendRegistrationCode = async (email: string) => {
     ) as ApiResponse<null>;
     return response; // 返回响应数据
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error('发送验证码失败:', error.response.data); // Log the error response
+    if (axios.isAxiosError(error)) {
+      console.error('发送验证码失败:', error.response?.data || error.message); // Log the error response
     } else {
       console.error('发送验证码失败:', error);
     }
@@ -80,8 +80,8 @@ export const registrationByCode = async (email: string, code: string) => {
 
     return response; // 返回响应数据
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error('注册失败:', error.response.data); // Log the error response
+    if (axios.isAxiosError(error)) {
+      console.error('注册失败:', error.response?.data || error.message); // Log the error response
     } else {
       console.error('注册失败:', error);
     }
@@ -103,8 +103,8 @@ export const sendForgetPwdCode = async (email: string) => {
     ) as ApiResponse<null>;
     return response; // 返回响应数据
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error('发送验证码失败:', error.response.data); // Log the error response
+    if (axios.isAxiosError(error)) {
+      console.error('发送验证码失败:', error.response?.data || error.message); // Log the error response
     } else {
       console.error('发送验证码失败:', error);
     }
@@ -133,8 +133,8 @@ export const resetPwd = async (email: string, code: string, password: string) =>
 
     return response; // 返回响应数据
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error('找回密码失败:', error.response.data); // Log the error response
+    if (axios.isAxiosError(error)) {
+      console.error('找回密码失败:', error.response?.data || error.message); // Log the error response
     } else {
       console.error('找回密码失败:', error);
     }
