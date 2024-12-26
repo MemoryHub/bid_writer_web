@@ -16,7 +16,7 @@ interface SplitContainerProps {
 
 const SplitContainer: React.FC<SplitContainerProps> = ({ left_container, right_container }) => {
     // ==================== 状态管理 ====================
-    const [splitPosition, setSplitPosition] = useState(50);  // 分割线位置，默认50%
+    const [splitPosition, setSplitPosition] = useState(60);  // 分割线位置，默认60%
     const [showLeftBlur, setShowLeftBlur] = useState(false);  // 左侧面板模糊状态
     const [showRightBlur, setShowRightBlur] = useState(false);  // 右侧面板模糊状态
     const [isMobile, setIsMobile] = useState(false);  // 设备类型标识

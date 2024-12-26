@@ -6,15 +6,17 @@ interface SubmitButtonProps {
   loading: boolean;
   onClick: (e: React.FormEvent) => Promise<void>; 
   text: string;
+  color?: string;
+  disabled?: boolean;
 }
 
-const SubmitButton: React.FC<SubmitButtonProps> = ({ loading, onClick, text }) => {
+const SubmitButton: React.FC<SubmitButtonProps> = ({ loading, onClick, text, color = 'blue', disabled = false }) => {
   return (
     <button
       onClick={onClick}
       type="submit"
-      className={`flex w-full justify-center rounded-[100px] bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 py-3 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-      disabled={loading} // 禁用按钮
+      className={`flex w-full justify-center rounded-[100px] ${disabled ? 'bg-gray-400 cursor-not-allowed' : `bg-gradient-to-tl from-${color}-600 to-violet-600 hover:from-violet-600 hover:to-${color}-600`} py-3 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={loading || disabled} // 禁用按钮
     >
       {loading ? (
         <>
