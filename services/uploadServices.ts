@@ -15,6 +15,7 @@ export const uploadMultipleFiles = async (files: File[]) => {
         'Content-Type': 'multipart/form-data', // Set the content type
       },
     });
+    
     return response.data; // Return the response data
   } catch (error) {
     console.error('File upload failed:', error);
