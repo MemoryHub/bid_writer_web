@@ -19,10 +19,10 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ loading, onClick, text, col
       disabled={loading || disabled} // 禁用按钮
     >
       {loading ? (
-        <>
+        <div className="flex items-center justify-center">
           <span className="animate-spin inline-block size-4 border-[3px] border-current border-t-transparent text-white rounded-full" role="status" aria-label="loading"></span>
-          <span className="ml-2">加载中...</span>
-        </>
+          <span className="ml-2 text-sm">加载中...</span>
+        </div>
       ) : (
         text
       )}

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Header from '../components/header/Header'
 import '../app/globals.css'
 import SplitContainer from '@/components/splitcontainer/SplitContainer'
-import Modal from '@/components/modal/Modal'
 import DropUploadButton from '@/components/button/DropUploadButton'
 import StampManage from './stamp_manage/stamp_manage'
 import SubmitButton from '@/components/button/SubmitButton'
@@ -44,16 +43,13 @@ export default function MagicStamp() {
   // ==================== 文件处理 ====================
   const handleFileSelect = (filePaths: File[]) => {
     if (filePaths.length > 0) {
-      console.log('Selected files:', filePaths[0])
       setFileList(filePaths);
     }else{
       setFileList([]);
     }
   }
 
-  const handleImageSelect = (index: number, path: string) => {
-    console.log('Selected Image Index:', index);
-    console.log('Selected Image Path:', path);
+  const handleImageSelect = (id: number, path: string) => {
     setStampPath(path);
     // 在这里可以处理选中的图片，例如更新状态或发送请求
   };
@@ -149,7 +145,7 @@ export default function MagicStamp() {
   const right_container = (
     <>
       <div className="p-4">
-
+        {/* <SomePage /> */}
         <StampManage onImageSelect={handleImageSelect} />
       </div>
     </>
@@ -163,13 +159,6 @@ export default function MagicStamp() {
       <SplitContainer
         left_container={left_container}
         right_container={right_container}
-      />
-      <Modal
-        isOpen={isModalOpen}
-        onSubmit={() => { }}
-        submitText="去登录"
-        title="去登录"
-        content="content"
       />
     </div>
   )

@@ -63,10 +63,10 @@ export default function UploadButton({ width, text, allowedTypes, loading, onCha
         style={width ? { width } : undefined}
       >
         {loading ? (
-          <>
+          <div className="flex items-center justify-center">
             <span className="animate-spin inline-block size-4 border-[3px] border-current border-t-transparent text-white rounded-full" role="status" aria-label="loading"></span>
-            <span className="ml-2">加载中...</span>
-          </>
+            <span className="ml-2 text-xs">加载中...</span>
+          </div>
         ) : (
           <>
             <svg 
