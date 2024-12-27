@@ -20,7 +20,7 @@ export default function InputFloatingLabel({ type, label, onChange, value }: Inp
                     type={type}
                     value={value}
                     id={`input-${label}`} // 确保每个输入框有唯一的ID
-                    className="peer py-4 px-0 block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent text-sm placeholder:text-transparent focus:outline-none focus:ring-0 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400"
+                    className="text-white dark:text-white peer py-4 px-0 block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent text-sm placeholder:text-transparent focus:outline-none focus:ring-0 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400"
                     placeholder=" "
                     onChange={handleInputChange} // 监听输入变化
                 />

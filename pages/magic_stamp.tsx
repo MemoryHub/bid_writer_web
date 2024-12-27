@@ -46,6 +46,8 @@ export default function MagicStamp() {
     if (filePaths.length > 0) {
       console.log('Selected files:', filePaths[0])
       setFileList(filePaths);
+    }else{
+      setFileList([]);
     }
   }
 
