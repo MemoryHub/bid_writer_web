@@ -2,30 +2,35 @@
 
 import { useState } from 'react'
 import Alert from '../alert/Alert'
+import { uploadMultipleFiles } from '@/services/uploadServices'
 
 interface UploadButtonProps {
-  onFileSelect?: (file: File) => void;
   width?: string;
-  loading: boolean;
   text?: string;
   allowedTypes?: string[];
+  loading?: boolean;
+  onChange?: (files: File[]) => void;
 }
 
-export default function UploadButton({ onFileSelect, width, loading, text, allowedTypes }: UploadButtonProps) {
+export default function UploadButton({ width, text, allowedTypes, loading, onChange }: UploadButtonProps) {
   const [showAlert, setShowAlert] = useState(false)
   const [alertType, setAlertType] = useState<'success' | 'error'>('success')
   const [alertTitle, setAlertTitle] = useState('')
   const [alertMsg, setAlertMsg] = useState('')
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    const fileArray = Array.from(files)
     // 默认值
-    allowedTypes = allowedTypes || ['.png', '.jpg', '.jpeg', '.pdf', '.docx']
-    const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf('.'))
-    if (!allowedTypes.includes(fileExtension)) {
-      setAlertType('error')
+    const validAllowedTypes = allowedTypes || ['.png', '.jpg', '.jpeg', '.pdf', '.docx'];
+    const invalidFiles = fileArray.filter(file => {
+      const fileExtension = file.name.toLowerCase().slice(file.name.lastIndexOf('.'));
+      return !validAllowedTypes.includes(fileExtension);
+    });
+
+    if (invalidFiles.length > 0) {
+      setAlertType('error');
       setAlertTitle('错误')
       setAlertMsg('只支持' + allowedTypes?.join(', ') + '格式的文件')
       setShowAlert(true)
@@ -35,7 +40,9 @@ export default function UploadButton({ onFileSelect, width, loading, text, allow
 
     // 检查文件大小（300MB = 300 * 1024 * 1024 bytes）
     const maxSize = 300 * 1024 * 1024
-    if (file.size > maxSize) {
+    const oversizedFiles = fileArray.filter(file => file.size > maxSize)
+
+    if (oversizedFiles.length > 0) {
       setAlertType('error')
       setAlertTitle('错误')
       setAlertMsg('文件大小不能超过 300MB')
@@ -44,8 +51,8 @@ export default function UploadButton({ onFileSelect, width, loading, text, allow
       return
     }
 
-    // 如果验证通过，调用回调函数
-    onFileSelect?.(file)
+
+    onChange?.(fileArray)
   }
 
   return (
@@ -86,6 +93,7 @@ export default function UploadButton({ onFileSelect, width, loading, text, allow
           className="sr-only"
           accept={allowedTypes?.join(', ')}
           disabled={loading} // 禁用按钮
+          multiple // 允许选择多个文件
           onChange={handleFileChange}
         />
       </label>

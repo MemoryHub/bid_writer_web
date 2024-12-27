@@ -36,7 +36,7 @@ const Alert: React.FC<AlertProps> = ({ type, title, msg, onClose }) => {
   const currentStyles = alertStyles[type];
 
   return (
-    <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 ${currentStyles.container} z-50`} role="alert">
+    <div className={`w-[300px] fixed top-4 left-1/2 transform -translate-x-1/2 ${currentStyles.container} z-50`} role="alert">
       <div className="flex">
         <div className="shrink-0">
           {/* Icon */}

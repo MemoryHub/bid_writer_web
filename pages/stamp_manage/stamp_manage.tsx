@@ -1,5 +1,7 @@
-import React, { useState } from 'react'; // 导入React和useState钩子
+import React, { useEffect, useState } from 'react'; // 导入React和useState钩子
 import UploadButton from '@/components/button/UploadButton'; // 导入上传按钮组件
+import { getStampList, uploadMultipleStamp } from '@/services/stampServices';
+import Alert from '@/components/alert/Alert';
 
 interface StampManageProps { // 定义StampManage组件的属性接口
     onImageSelect: (index: number, path: string) => void; // 选择图像的回调函数
@@ -12,8 +14,30 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
     const [selectedDeleteImages, setSelectedDeleteImages] = useState<number[]>([]);
     // 选中的图像索引状态
     const [isBatchDeleteMode, setIsBatchDeleteMode] = useState(false); 
-    // 批量删除模式状态
-    const mockImages = Array.from({ length: 7 }, (_, index) => `/img/stamp-test.jpg`); // 模拟图像数组
+    const [stampImages, setImages] = useState<string[]>([]); // 用于存储真实数据
+    const [showAlert, setShowAlert] = useState(false)
+    const [alertType, setAlertType] = useState<'success' | 'error'>('success')
+    const [alertTitle, setAlertTitle] = useState('')
+    const [alertMsg, setAlertMsg] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    // 获取印章列表
+    useEffect(() => {
+        const fetchStampList = async () => {
+            try {
+                const images = await getStampList(); // 调用接口获取印章列表
+                if (images) { // Check if images is not null or undefined
+                    setImages(images); // 更新状态
+                } else {
+                    console.error('获取印章列表失败: 返回的图像列表为空');
+                }
+            } catch (error) {
+                console.error('获取印章列表失败:', error);
+            }
+    }
+    fetchStampList(); // 调用获取印章列表的函数
+},[]);
+
 
     const toggleSelectImage = (index: number) => { // 切换选择图像的函数
         if (isBatchDeleteMode) {
@@ -30,12 +54,43 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
             setSelectedImage(prev => { // 更新选中的图像状态
                 const newIndex = prev === index ? null : index; // 如果当前图像已选中，则取消选择
                 if (newIndex !== null) { // 如果选择了新图像
-                    onImageSelect(newIndex, mockImages[newIndex]); // 调用回调函数传递新图像信息
+                    onImageSelect(newIndex, stampImages[newIndex]); // 调用回调函数传递新图像信息
                 } else { // 如果取消选择
                     onImageSelect(-1, ''); // 调用回调函数传递无效图像信息
                 }
                 return newIndex; // 返回新的选中索引
             });
+        }
+    };
+
+    const handleUploadStamp = async (files: File[]) => {
+        try {
+            setLoading(true);
+            const response = await uploadMultipleStamp(files);
+            setLoading(false);
+            setAlertType('success');
+            setAlertTitle('上传成功');
+            setAlertMsg('文件上传成功');
+            setShowAlert(true);
+
+            try {
+                const images = await getStampList(); // 调用接口获取印章列表
+                if (images) { // Check if images is not null or undefined
+                    setImages(images); // 更新状态
+                } else {
+                    console.error('获取印章列表失败: 返回的图像列表为空');
+                }
+            } catch (error) {
+                console.error('获取印章列表失败:', error);
+            }
+        } catch (error) {
+            setAlertType('error');
+            setAlertTitle('上传失败');
+            setAlertMsg('文件上传失败');
+            setShowAlert(true);
+            setLoading(false);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -58,7 +113,7 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
     return ( // 返回组件的UI
         <>
             <div className='flex items-center'> 
-                <UploadButton loading={false} text='上传印章' allowedTypes={['.png', '.jpg', '.jpeg']} /> 
+                <UploadButton text='上传印章' allowedTypes={['.png', '.jpg', '.jpeg']} onChange={handleUploadStamp} loading={loading}/> 
               
                 {isBatchDeleteMode ? (
                     <div className="ml-4 flex items-center">
@@ -89,7 +144,7 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
 
             <div className='bg-gray-200 mt-6 p-4 rounded-xl shadow-md'> 
                 <div className={`grid grid-cols-5 gap-4`}> 
-                    {mockImages.map((src, index) => ( // 遍历模拟图像数组
+                    {stampImages.map((src, index) => ( // 遍历模拟图像数组
                         <div key={index} className={`rounded-xl relative w-full h-0 pb-[100%] cursor-pointer ${isBatchDeleteMode ? (selectedDeleteImages.includes(index) ? 'border-4 border-red-600' : '') : (selectedImage === index ? 'border-4 border-green-600' : '')}`} onClick={() => toggleSelectImage(index)}> 
                             <img src={src} alt={`Stamp ${index + 1}`} className="absolute top-0 left-0 w-full h-full object-cover rounded-xl" /> 
                             {selectedDeleteImages.includes(index) && isBatchDeleteMode && ( // 在批量删除模式下显示红色选中样式
@@ -112,6 +167,14 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
                     ))}
                 </div>
             </div>
+            {showAlert && (
+        <Alert
+          type={alertType}
+          title={alertTitle}
+          msg={alertMsg}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
         </>
     );
 };
