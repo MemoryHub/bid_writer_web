@@ -31,7 +31,7 @@ export default function Login() {
         localStorage.setItem('email', email); 
         setAlertType('success');
         setAlertTitle('登录成功');
-        setAlertMsg('你已成功登录');
+        setAlertMsg('你已成功登录，即将返回主页...');
         setShowAlert(true);
           // 显示 Alert 后延迟执行 router.back()
           setTimeout(() => {
@@ -58,7 +58,13 @@ export default function Login() {
           onClose={() => setShowAlert(false)}
         />
       )}
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 relative">
+        <button
+          className="mt-10 ml-20 font-semibold absolute top-4 left-4 flex items-center text-indigo-600 hover:text-indigo-500"
+          onClick={() => router.back()}
+        >
+          <span className="mr-2 ">←</span> 返回
+        </button>
         <GradientBg />
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <picture>

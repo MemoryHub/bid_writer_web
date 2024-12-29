@@ -8,6 +8,8 @@ import DropUploadButton from '@/components/button/DropUploadButton'
 import StampManage from './stamp_manage/stamp_manage'
 import SubmitButton from '@/components/button/SubmitButton'
 import InputFloatingLabel from '@/components/input/InputFloatingLabel'
+import { createStamped } from '@/services/stampServices'
+import Alert from '@/components/alert/Alert'
 
 /**
  * 魔法印章组件
@@ -25,6 +27,10 @@ export default function MagicStamp() {
   const [stampPath, setStampPath] = useState('');
   const [sealType, setSealType] = useState('全部'); // 存储选中的印章类型
   const [fileList, setFileList] = useState<File[]>([]);
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertType, setAlertType] = useState<'success' | 'error'>('success')
+  const [alertTitle, setAlertTitle] = useState('')
+  const [alertMsg, setAlertMsg] = useState('')
 
   // 监听条件变化，更新disabled状态
   useEffect(() => {
@@ -38,13 +44,58 @@ export default function MagicStamp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     // 提交逻辑
+    const stamp_type = sealType == '全部' ? 'both' : sealType == '骑缝章' ? 'seal' : 'stamp';
+    if (fileList.length > 0) {
+      setLoading(true); // 开始加载
+      const response = await createStamped(fileList[0] as unknown as string, stampPath, stamp_type);
+      if (response && response.code === 200) {
+        setAlertType('success');
+        setAlertTitle('印章成功');
+        setAlertMsg('印章已生成，快去查看');
+        setShowAlert(true);
+        setLoading(false); // 结束加载
+        // 自动下载输出文件
+        const outputFilePath = response.data?.output_file_path; // 获取输出文件的路径
+        if (outputFilePath) {
+            try {
+                const fileResponse = await fetch(outputFilePath); // 获取文件的 Blob 数据
+                if (!fileResponse.ok) throw new Error('网络错误，无法下载文件');
+
+                const blob = await fileResponse.blob(); // 将响应转换为 Blob
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob); // 创建一个指向 Blob 的 URL
+
+                // 从输出文件路径中提取文件名
+                const fileName = outputFilePath.split('/').pop() || 'stamped_file.pdf'; // 获取文件名
+                link.setAttribute('download', fileName); // 设置下载文件的名称
+                document.body.appendChild(link);
+                link.click(); // 触发点击事件
+                document.body.removeChild(link); // 下载后移除链接
+            } catch (error) {
+                console.error('下载文件失败:', error);
+            }
+        }
+      } else {
+        setAlertType('error');
+        setAlertTitle('印章失败');
+        setAlertMsg('印章生成失败');
+        setShowAlert(true);
+        setLoading(false); // 结束加载
+      }
+    } else {
+      setAlertType('error');
+      setAlertTitle('印章失败');
+      setAlertMsg('请上传文件');
+      setShowAlert(true);
+    }
   }
 
   // ==================== 文件处理 ====================
   const handleFileSelect = (filePaths: File[]) => {
     if (filePaths.length > 0) {
+      console.log("filePaths: " + filePaths);
       setFileList(filePaths);
-    }else{
+    } else {
       setFileList([]);
     }
   }
@@ -67,16 +118,12 @@ export default function MagicStamp() {
         >
           魔法印章
         </h1>
-        <p className="text-gray-300 mb-8 w-full
-                  tablet:text-base
-                  mobile:text-sm"
+        <p className="text-gray-100 mb-8 w-full text-sm"
         >
           一键加盖整本印章，一键加盖骑缝章。告别繁琐的手动盖章。
         </p>
 
-        <p className="text-gray-300 mb-8 w-full
-                  tablet:text-sm
-                  mobile:text-xs"
+        <p className="text-gray-300 mb-8 w-full text-xs"
         >
           上传目标文件，点击右侧印章，一键加盖。
         </p>
@@ -110,15 +157,15 @@ export default function MagicStamp() {
           {/* 选择印章类型区域 */}
           <div className="flex items-center space-x-4 mt-4">
             <div className="flex items-center">
-              <input type="radio" name="sealType" id="sealTypeAll" className="mr-2" defaultChecked onChange={() => setSealType('全部')} />
+              <input type="radio" name="sealType" id="sealTypeAll" className="mr-2 accent-blue-600" defaultChecked onChange={() => setSealType('全部')} />
               <label htmlFor="sealTypeAll" className="text-sm text-gray-500">全部</label>
             </div>
             <div className="flex items-center">
-              <input type="radio" name="sealType" id="sealTypeRiding" className="mr-2" onChange={() => setSealType('骑缝章')} />
+              <input type="radio" name="sealType" id="sealTypeRiding" className="mr-2 accent-blue-600" onChange={() => setSealType('骑缝章')} />
               <label htmlFor="sealTypeRiding" className="text-sm text-gray-500">骑缝章</label>
             </div>
             <div className="flex items-center">
-              <input type="radio" name="sealType" id="sealTypeStamp" className="mr-2" onChange={() => setSealType('印章')} />
+              <input type="radio" name="sealType" id="sealTypeStamp" className="mr-2 accent-blue-600" onChange={() => setSealType('印章')} />
               <label htmlFor="sealTypeStamp" className="text-sm text-gray-500">印章</label>
             </div>
           </div>
@@ -131,7 +178,7 @@ export default function MagicStamp() {
             loading={loading}
             disabled={disabled}
             onClick={handleSubmit}
-            text='生成'
+            text='生 成'
             color='red' />
         </div>
       </div>
@@ -145,7 +192,6 @@ export default function MagicStamp() {
   const right_container = (
     <>
       <div className="p-4">
-        {/* <SomePage /> */}
         <StampManage onImageSelect={handleImageSelect} />
       </div>
     </>
@@ -160,6 +206,15 @@ export default function MagicStamp() {
         left_container={left_container}
         right_container={right_container}
       />
+
+      {showAlert && (
+        <Alert
+          type={alertType}
+          title={alertTitle}
+          msg={alertMsg}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </div>
   )
 }

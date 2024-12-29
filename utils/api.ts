@@ -32,7 +32,13 @@ apiClient.interceptors.response.use((response) => {
         alert('请求错误，请检查输入');
         break;
       case 401:
-        alert('未授权，请登录');
+        alert('未登录或登录过期，请登录');
+        localStorage.removeItem('token'); // 清除 token
+        localStorage.removeItem('email'); // 清除 email
+        window.location.href = '/login/login'; // 跳转到登录页面
+        break;
+      case 402:
+        alert('没有权限访问该资源');
         break;
       case 403:
         alert('没有权限访问该资源');

@@ -53,7 +53,7 @@ const DropUploadButton: React.FC<DropUploadButtonProps> = ({ text,onFileSelect }
     <FilePond
       allowMultiple={true} // 允许上传多个文件
       maxFiles={1} // 限制最多上传文件数量为 1
-      acceptedFileTypes={['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']} // 接受的文件类型为 PDF 和 DOCX
+      acceptedFileTypes={['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword']} // 接受的文件类型为 PDF, DOCX 和 DOC
       labelIdle={text} // 空闲状态下的提示信息
       labelFileProcessing='上传中...' // 文件上传中的提示信息
       labelFileProcessingComplete='上传完毕' // 文件上传完成后的提示信息

@@ -1,5 +1,6 @@
-import { ApiResponse } from '@/utils/response';
+import { ApiResponse, StampedResponse } from '@/utils/response';
 import apiClient from '../utils/api'; // Import your Axios instance
+import axios from 'axios';
 
 // 获取印章列表
 export const getStampList = async () => {
@@ -13,7 +14,6 @@ export const getStampList = async () => {
         return response.data; // 返回印章列表数据
     } catch (error) {
         console.error('获取印章列表失败:', error);
-        throw error; // 重新抛出错误以便其他地方可以处理
     }
 };
 
@@ -30,7 +30,6 @@ export const deleteStampBatch = async (imageIds: number[]) => {
         return response; // 返回删除结果
     } catch (error) {
         console.error('删除印章失败:', error);
-        throw error; // 重新抛出错误以便其他地方可以处理
     }
 };
 
@@ -52,6 +51,23 @@ export const uploadMultipleStamp = async (images: File[]) => {
       return response.data; // Return the response data
     } catch (error) {
       console.error('印章图片上传失败:', error);
-      throw error; // Rethrow the error for handling in the calling function
     }
   };
+
+// 印章生成接口
+export const createStamped = async (input_file_path: string,stamp_file_path: string,stamp_type:string = 'both') => {
+  const token = localStorage.getItem('token'); // 从localStorage获取token
+  try {
+    const response = await apiClient.post(`/stamp/smart-stamp?input_file=${(input_file_path)}&stamp_file=${(stamp_file_path)}&stamp_type=${(stamp_type)}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // 将token添加到请求头
+        },
+      }
+    ) as StampedResponse;
+    return response; // 返回响应数据
+  } catch (error) {
+    console.error('印章生成失败:', error);
+  }
+};

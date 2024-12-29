@@ -25,25 +25,26 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false)
     const [delete_loading, setDeleteLoading] = useState(false)
+    const [hasToken, setHasToken] = useState(false);
 
 
     // 获取印章列表
     useEffect(() => {
-        const fetchStampList = async () => {
-        // 获取印章列表
-          handleGetStampList();
+        const token = localStorage.getItem('token');
+        if (token) {
+            setHasToken(true);
+            handleGetStampList(); // Call the function to get the stamp list
         }
-        fetchStampList(); // 调用获取印章列表的函数
     }, []);
 
 
     const handleOpenModal = () => {
-        if(selectedDeleteImages.length <= 0){
+        if (selectedDeleteImages.length <= 0) {
             setAlertType('error');
             setAlertTitle('删除失败');
             setAlertMsg('请选择要删除的印章');
             setShowAlert(true);
-           return
+            return
         }
         setIsModalOpen(true)
     }
@@ -130,7 +131,7 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
         setDeleteLoading(true);
         try {
             const response = await deleteStampBatch(selectedDeleteImages);
-            if (response.code === 200) {
+            if (response && response.code === 200) {
                 setAlertType('success');
                 setAlertTitle('删除成功');
                 setAlertMsg('印章删除成功');
@@ -159,65 +160,73 @@ const StampManage: React.FC<StampManageProps> = ({ onImageSelect }) => {
         setIsModalOpen(false);
         setSelectedDeleteImages([]); // 清空选中的删除图像
         setSelectedImage(null); // 清空选中的图像
-        
+
     };
 
     return ( // 返回组件的UI
         <>
             <div className='flex items-center'>
-                <UploadButton text='上传印章' allowedTypes={['.png', '.jpg', '.jpeg']} onChange={handleUploadStamp} loading={loading} />
+                {hasToken ? (<div className='flex items-center'><UploadButton text='上传印章' allowedTypes={['.png', '.jpg', '.jpeg']} onChange={handleUploadStamp} loading={loading} />
 
-                {isBatchDeleteMode ? (
-                    <div className="ml-4 flex items-center">
-                        <button
-                            className="text-white px-2 py-1 rounded mr-2"
-                            onClick={handleCancelDelete}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                        <button
-                            className="text-red-500 px-2 py-1 rounded"
-                            onClick={handleOpenModal}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6h18M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2M6 6v12a2 2 0 002 2h8a2 2 0 002-2V6H6z" />
-                            </svg>
-                        </button>
-                    </div>
-                ) : <button
-                    className="ml-4 text-black px-2 py-1 rounded"
-                    onClick={handleBatchDelete}
-                >
-                    <span className='text-xs text-white'>选择</span>
-                </button>}
+                    {isBatchDeleteMode ? (
+                        <div className="ml-4 flex items-center">
+                            <button
+                                className="text-white px-2 py-1 rounded mr-2"
+                                onClick={handleCancelDelete}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <button
+                                className="text-red-500 px-2 py-1 rounded"
+                                onClick={handleOpenModal}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6h18M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2M6 6v12a2 2 0 002 2h8a2 2 0 002-2V6H6z" />
+                                </svg>
+                            </button>
+                        </div>
+                    ) : <button
+                        className="ml-4 text-black px-2 py-1 rounded"
+                        onClick={handleBatchDelete}
+                    >
+                        <span className='text-xs text-white'>选择</span>
+                    </button>}</div>) : (<div className='text-sm text-white'>印章管理,请先登录</div>)}
+
             </div>
 
             <div className='bg-gray-200 mt-6 p-4 rounded-xl shadow-md'>
-                <div className={`grid grid-cols-5 gap-4`}>
-                    {stampImages.map((item, index) => ( // 遍历模拟图像数组
-                        <div key={index} className={`rounded-xl relative w-full h-0 pb-[100%] cursor-pointer ${isBatchDeleteMode ? (selectedDeleteImages.includes(item.id) ? 'border-4 border-red-600' : '') : (selectedImage === index ? 'border-4 border-green-600' : '')}`} onClick={() => toggleSelectImage(index)}>
-                            <img src={item.path} alt={`Stamp ${index + 1}`} className="absolute top-0 left-0 w-full h-full object-cover rounded-xl" />
-                            {selectedDeleteImages.includes(item.id) && isBatchDeleteMode && ( // 在批量删除模式下显示红色选中样式
-                                <>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-red-600 to-transparent" />
-                                    <svg className="absolute bottom-2 right-2 w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </>
-                            )}
-                            {selectedImage === index && !isBatchDeleteMode && ( // 仅在普通模式下显示绿色选中样式
-                                <>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-green-600 to-transparent" />
-                                    <svg className="absolute bottom-2 right-2 w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                {hasToken && stampImages.length > 0 ? (
+                    <div className={`grid grid-cols-5 gap-4`}>
+                        {stampImages.map((item, index) => ( // 遍历模拟图像数组
+                            <div key={index} className={`rounded-xl relative w-full h-0 pb-[100%] cursor-pointer ${isBatchDeleteMode ? (selectedDeleteImages.includes(item.id) ? 'border-4 border-red-600' : '') : (selectedImage === index ? 'border-4 border-green-600' : '')}`} onClick={() => toggleSelectImage(index)}>
+                                <img src={item.path} alt={`Stamp ${index + 1}`} className="absolute top-0 left-0 w-full h-full object-cover rounded-xl" />
+                                {selectedDeleteImages.includes(item.id) && isBatchDeleteMode && ( // 在批量删除模式下显示红色选中样式
+                                    <>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-red-600 to-transparent" />
+                                        <svg className="absolute bottom-2 right-2 w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </>
+                                )}
+                                {selectedImage === index && !isBatchDeleteMode && ( // 仅在普通模式下显示绿色选中样式
+                                    <>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-green-600 to-transparent" />
+                                        <svg className="absolute bottom-2 right-2 w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                ) : (
+                    <div className="text-xs text-center text-gray-700">
+                        你的印章将上传到这里，快去上传吧 ！
+                    </div>
+                )}
             </div>
             {showAlert && (
                 <Alert

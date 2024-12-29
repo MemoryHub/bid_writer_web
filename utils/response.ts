@@ -36,3 +36,7 @@ export interface LoginResponse extends AxiosResponse{
   access_token: string;
   token_type: string;
 }
+
+export interface StampedResponse extends ApiResponse<{
+    output_file_path: string;
+}> {}
