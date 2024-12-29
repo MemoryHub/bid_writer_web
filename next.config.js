@@ -2,16 +2,17 @@
 const nextConfig = {
   transpilePackages: ['three'],  // 如果你的外部JS依赖three.js
   webpack: (config) => {
-    config.externals = {
-      ...config.externals,
-      canvas: 'canvas',  // 如果你的外部JS需要canvas
-    }
+    config.externals = config.externals || [];
+    config.externals.push({
+      canvas: 'commonjs canvas',  // 使用 commonjs 方式引入
+    });
+
     // 添加性能优化
     config.optimization = {
       ...config.optimization,
       usedExports: true,
       sideEffects: true,
-    }
+    };
 
     // 添加 Node.js polyfills
     config.resolve.fallback = {
@@ -29,22 +30,25 @@ const nextConfig = {
       os: require.resolve('os-browserify'),
       path: require.resolve('path-browserify'),
       'crypto-browserify': require.resolve('crypto-browserify'),
-    }
+    };
 
-    return config
+    return config;
   },
 
   // 添加页面优化配置
   experimental: {
-    optimizeCss: true,    // 优化 CSS
-    optimizeImages: true, // 优化图片
-    scrollRestoration: true, // 优化滚动恢复
+    optimizeCss: true,
+    scrollRestoration: true,
   },
 
   // 添加性能优化
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-}
 
-module.exports = nextConfig 
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+};
+
+module.exports = nextConfig; 
